@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.25"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+configMaps:
+  enabled: true
+  data:
+    APP_ENV: dev
+    LOG_LEVEL: debug
+
+secrets:
+  enabled: true
+  data:
+    DB_USERNAME: dev_user
+    DB_PASSWORD: dev_password
+    JWT_SECRET: dev_jwt_secret
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: dev-app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80

@@ -1,0 +1,48 @@
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.25"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi
+
+configMaps:
+  enabled: true
+  data:
+    APP_ENV: qa
+    LOG_LEVEL: info
+
+secrets:
+  enabled: true
+  data:
+    DB_USERNAME: qa_user
+    DB_PASSWORD: qa_password
+    JWT_SECRET: qa_jwt_secret
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: qa-app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: qa-app-tls
+      hosts:
+        - qa-app.example.com
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
